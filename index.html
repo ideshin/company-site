@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>スカイラインテクノロジー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..800&family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap">
+<style>
+/* Layout: 一本の地平線（スカイライン）を軸に、上に見出し・下に事業内容を積む「断面図」構成 */
+:root {
+  --ground: #EEF1F4;
+  --surface: #F8FAFB;
+  --ink: #13202B;
+  --muted: #586877;
+  --line: #C8D1D9;
+  --signal: #CF2F1C;      /* 航空障害灯の赤 */
+  --building: #23323F;
+  --building-2: #3A4B5A;
+  --window: #F2C76B;
+  --sky-top: #DCE4EB;
+  --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-latin: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.75rem;
+  --step-3: clamp(2rem, 5vw, 3.5rem);
+  --wrap: 72rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0D141B; --surface: #131D26; --ink: #E4EAF0; --muted: #8E9DAB;
+    --line: #26333F; --signal: #FF5B3D; --building: #1C2833; --building-2: #263644;
+    --window: #E9B95A; --sky-top: #0A1016; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0D141B; --surface: #131D26; --ink: #E4EAF0; --muted: #8E9DAB;
+  --line: #26333F; --signal: #FF5B3D; --building: #1C2833; --building-2: #263644;
+  --window: #E9B95A; --sky-top: #0A1016; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.8;
+  padding-inline: 16px;
+  margin: 0;
+}
+.wrap { max-width: var(--wrap); margin-inline: auto; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.35; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+.mono { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.02em; }
+.eyebrow {
+  font-family: var(--font-latin); font-stretch: 112%; font-weight: 700;
+  font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.eyebrow::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--signal); }
+
+/* Header */
+.site-header {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  margin-inline: -16px; padding-inline: 16px;
+}
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.85rem; }
+.logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+.logo svg { flex: none; }
+.logo-text { font-family: var(--font-latin); font-stretch: 120%; font-weight: 800; font-size: 1.05rem; letter-spacing: 0.04em; }
+.logo-text small { display: block; font-family: var(--font-display); font-stretch: 100%; font-weight: 500; font-size: 0.68rem; letter-spacing: 0.08em; color: var(--muted); line-height: 1.2; }
+nav ul { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
+nav a { text-decoration: none; color: var(--muted); }
+nav a:hover { color: var(--ink); }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font: 700 0.9rem var(--font-body); text-decoration: none; cursor: pointer;
+  padding: 0.7rem 1.2rem; border-radius: 2px; border: 1px solid var(--ink);
+  background: var(--ink); color: var(--ground);
+}
+.btn:hover { background: var(--signal); border-color: var(--signal); color: #fff; }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.ghost:hover { border-color: var(--signal); color: var(--signal); background: transparent; }
+@media (max-width: 760px) { nav { display: none; } }
+
+/* News */
+.news { background: var(--surface); border-bottom: 1px solid var(--line); margin-inline: -16px; padding-inline: 16px; }
+.news-inner { display: grid; grid-template-columns: 7rem 1fr; gap: 0.5rem 1.5rem; padding-block: 1.1rem; align-items: start; }
+.news-title { font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 0.6rem; line-height: 1.8; }
+.news-title::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--signal); flex: none; }
+.news-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.news-list li { display: grid; grid-template-columns: 6.5rem 5.5rem 1fr; gap: 0.25rem 1rem; align-items: baseline; padding-block: 0.35rem; font-size: 0.92rem; }
+.news-list li + li { border-top: 1px dashed var(--line); }
+.news-list time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.news-tag { justify-self: start; border: 1px solid var(--line); padding: 0 0.5rem; border-radius: 2px; color: var(--muted); font-size: 0.75rem; }
+.news-text { min-width: 0; }
+@media (max-width: 760px) {
+  .news-inner { grid-template-columns: 1fr; }
+  .news-list li { grid-template-columns: auto 1fr; }
+  .news-text { grid-column: 1 / -1; }
+}
+
+/* Hero */
+.hero { padding-block: clamp(2.5rem, 6vw, 4.5rem) 0; }
+.hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; align-items: end; }
+.hero h1 { font-size: var(--step-3); font-weight: 900; letter-spacing: 0.01em; margin-top: 1.1rem; }
+.hero h1 em { font-style: normal; color: var(--signal); }
+.hero-lead { color: var(--muted); max-width: 34em; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+@media (max-width: 760px) { .hero-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
+
+.skyline-figure { margin: clamp(2rem, 5vw, 3rem) 0 0; }
+.skyline-canvas-wrap {
+  position: relative; height: clamp(220px, 32vw, 340px);
+  margin-inline: -16px;
+  background: linear-gradient(to bottom, var(--sky-top), var(--ground));
+  border-bottom: 2px solid var(--ink);
+}
+#skyline { display: block; width: 100%; height: 100%; }
+.skyline-figure figcaption {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.5rem;
+  padding-top: 0.75rem; color: var(--muted);
+}
+.skyline-figure figcaption .light::before {
+  content: ""; display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--signal); margin-right: 0.45rem; vertical-align: 0.05em;
+}
+
+/* Sections */
+section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+section + section { border-top: 1px solid var(--line); }
+.section-head { display: grid; grid-template-columns: 1fr 1.4fr; gap: 1rem 3rem; align-items: end; margin-bottom: 2.5rem; }
+.section-head h2 { font-size: var(--step-2); font-weight: 700; margin-top: 0.6rem; }
+.section-head p { color: var(--muted); max-width: 36em; }
+@media (max-width: 760px) { .section-head { grid-template-columns: 1fr; } }
+
+/* Products */
+.products { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--ink); }
+.product { padding: 1.75rem 1.5rem 1.75rem 0; display: grid; grid-template-rows: auto auto 1fr auto; gap: 0.9rem; min-width: 0; }
+.product + .product { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+.product-name { font-family: var(--font-latin); font-stretch: 118%; font-weight: 800; font-size: var(--step-1); letter-spacing: 0.02em; }
+.product-name span { color: var(--signal); }
+.product h3 { font-size: 1.05rem; font-weight: 700; }
+.product p { color: var(--muted); font-size: 0.95rem; }
+.spec { display: grid; gap: 0.35rem; margin: 0; padding-top: 0.9rem; border-top: 1px dashed var(--line); }
+.spec div { display: flex; justify-content: space-between; gap: 1rem; }
+.spec dt { color: var(--muted); }
+.spec dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 860px) {
+  .products { grid-template-columns: 1fr; }
+  .product, .product + .product { padding: 1.5rem 0; border-left: 0; }
+  .product + .product { border-top: 1px solid var(--line); }
+}
+
+/* Formats strip */
+.formats { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 2rem; }
+.formats .label { color: var(--muted); margin-right: 0.5rem; }
+.chip { border: 1px solid var(--line); background: var(--surface); padding: 0.2rem 0.6rem; border-radius: 2px; }
+
+/* Cases */
+.cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.case { background: var(--surface); border: 1px solid var(--line); padding: 1.5rem; display: grid; grid-template-rows: auto 1fr auto; gap: 1rem; min-width: 0; }
+.case-metric { font-family: var(--font-latin); font-stretch: 85%; font-weight: 800; font-size: 2.75rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.case-metric small { font-size: 1rem; font-weight: 600; margin-left: 0.2rem; color: var(--muted); }
+.case p { font-size: 0.95rem; }
+.case footer { color: var(--muted); border-top: 1px solid var(--line); padding-top: 0.75rem; }
+@media (max-width: 860px) { .cases { grid-template-columns: 1fr; } }
+
+/* Company */
+.company-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 2.5rem 3rem; }
+.company-grid > * { min-width: 0; }
+.message p + p { margin-top: 1rem; }
+.message .sign { margin-top: 1.25rem; color: var(--muted); font-size: 0.9rem; }
+.profile { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.profile th, .profile td { text-align: left; vertical-align: top; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
+.profile th { width: 8em; color: var(--muted); font-weight: 400; padding-right: 1rem; }
+.profile td { font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) { .company-grid { grid-template-columns: 1fr; } }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: 1fr 1.4fr; gap: 2.5rem 3rem; }
+.contact > * { min-width: 0; }
+.contact-info { display: grid; gap: 1.25rem; align-content: start; }
+.contact-info dt { color: var(--muted); font-size: 0.85rem; }
+.contact-info dd { margin: 0.15rem 0 0; font-family: var(--font-mono); user-select: all; }
+form { display: grid; gap: 1rem; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+label { display: grid; gap: 0.35rem; font-size: 0.9rem; font-weight: 700; }
+input, select, textarea {
+  font: 400 1rem var(--font-body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 2px; padding: 0.65rem 0.75rem; width: 100%;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--signal); outline-offset: 0; border-color: transparent; }
+textarea { min-height: 8rem; resize: vertical; }
+.form-status { font-size: 0.9rem; color: var(--muted); min-height: 1.5em; }
+.form-status.ok { color: var(--ink); }
+@media (max-width: 760px) { .contact, .field-row { grid-template-columns: 1fr; } }
+
+/* Footer */
+.site-footer { border-top: 2px solid var(--ink); padding-block: 2rem 2.5rem; color: var(--muted); font-size: 0.85rem; }
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="スカイラインテクノロジー トップへ">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <rect x="2" y="14" width="6" height="14" fill="currentColor"/>
+        <rect x="10" y="4" width="7" height="24" fill="currentColor"/>
+        <rect x="19" y="10" width="9" height="18" fill="currentColor"/>
+        <circle cx="13.5" cy="2" r="2" fill="var(--signal)"/>
+      </svg>
+      <span class="logo-text">SKYLINE<small>スカイラインテクノロジー</small></span>
+    </a>
+    <nav aria-label="メイン">
+      <ul>
+        <li><a href="#products">製品</a></li>
+        <li><a href="#cases">導入事例</a></li>
+        <li><a href="#company">会社概要</a></li>
+      </ul>
+    </nav>
+    <a class="btn" href="#contact">お問い合わせ</a>
+  </div>
+</header>
+
+<main id="top">
+  <aside class="news" aria-labelledby="news-title">
+    <div class="wrap news-inner">
+      <h2 id="news-title" class="news-title">お知らせ</h2>
+      <ul class="news-list">
+        <li>
+          <time class="mono" datetime="2026-09-30">2026.09.30</time>
+          <span class="news-tag mono">製品</span>
+          <span class="news-text">SKYLINE Shadow 4.2 を公開しました。PLATEAU の 2026 年度版 3D 都市モデルに対応しています。</span>
+        </li>
+        <li>
+          <time class="mono" datetime="2026-09-12">2026.09.12</time>
+          <span class="news-tag mono">イベント</span>
+          <span class="news-text">10月21日〜23日に幕張メッセで開催される「建築・都市DX展 2026」に出展します（ブース 4-118）。</span>
+        </li>
+        <li>
+          <time class="mono" datetime="2026-08-28">2026.08.28</time>
+          <span class="news-tag mono">会社</span>
+          <span class="news-text">福岡オフィスを開設しました。九州エリアのお客様へのサポート体制を強化します。</span>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Software for the built environment</p>
+        <h1>都市の高さを、<br><em>データ</em>で設計する。</h1>
+      </div>
+      <div>
+        <p class="hero-lead">スカイラインテクノロジーは、建築と都市開発のためのソフトウェアをつくる会社です。計画段階のボリューム検討と日影解析から、竣工後の設備運用まで、建物の一生をひとつのデータでつなぎます。</p>
+        <div class="hero-actions">
+          <a class="btn" href="#contact">デモを申し込む</a>
+          <a class="btn ghost" href="#products">製品を見る</a>
+        </div>
+      </div>
+    </div>
+
+    <figure class="skyline-figure">
+      <div class="skyline-canvas-wrap">
+        <canvas id="skyline" role="img" aria-label="高さの目盛り付きで描いた都市のスカイライン。高さ60m以上の建物の屋上で航空障害灯が点滅している。"></canvas>
+      </div>
+      <figcaption class="mono">
+        <span>断面 A–A′ ／ 縮尺 1:4000 ／ GL±0</span>
+        <span class="light">高さ60m以上の建物には航空障害灯の設置が必要です（航空法 第51条）</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap">
+    <section id="products" aria-labelledby="products-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Products</p>
+          <h2 id="products-title">計画から運用まで、3つの製品</h2>
+        </div>
+        <p>どの製品も同じ建物モデルを共有します。設計者が描いた形状が、そのまま日影解析の入力になり、竣工後はセンサーの位置情報として使われます。</p>
+      </div>
+
+      <div class="products">
+        <article class="product">
+          <p class="product-name">SKYLINE <span>Massing</span></p>
+          <h3>法規を満たす建物形状を、数秒で</h3>
+          <p>敷地と用途地域を入力すると、道路斜線・隣地斜線・日影規制をすべて満たしたうえで、容積率を最大化するボリュームを複数案提示します。</p>
+          <dl class="spec mono">
+            <div><dt>判定項目</dt><dd>斜線制限 4種 / 日影規制</dd></div>
+            <div><dt>1案の計算時間</dt><dd>平均 4.2 秒</dd></div>
+            <div><dt>出力</dt><dd>IFC / DXF / PDF</dd></div>
+          </dl>
+        </article>
+        <article class="product">
+          <p class="product-name">SKYLINE <span>Shadow</span></p>
+          <h3>日影図と眺望の解析を自動化</h3>
+          <p>冬至日の真太陽時 8:00〜16:00 の日影図を、等時間日影線つきで自動作成。周辺建物の3D都市モデルを読み込み、眺望の変化も比較できます。</p>
+          <dl class="spec mono">
+            <div><dt>測定面の高さ</dt><dd>1.5 / 4.0 / 6.5 m</dd></div>
+            <div><dt>時間刻み</dt><dd>最小 1 分</dd></div>
+            <div><dt>周辺モデル</dt><dd>PLATEAU (CityGML)</dd></div>
+          </dl>
+        </article>
+        <article class="product">
+          <p class="product-name">SKYLINE <span>Ops</span></p>
+          <h3>竣工後のビルを、ひとつの画面で</h3>
+          <p>空調・照明・昇降機のセンサー情報を建物モデルの上に重ねて表示します。異常の検知から保守業者への連絡まで、ひとつの画面で完結します。</p>
+          <dl class="spec mono">
+            <div><dt>接続ポイント数</dt><dd>最大 120,000 点</dd></div>
+            <div><dt>対応プロトコル</dt><dd>BACnet / Modbus</dd></div>
+            <div><dt>データ保持</dt><dd>10 年間</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="formats mono">
+        <span class="label">読み込める形式</span>
+        <span class="chip">IFC 4.3</span>
+        <span class="chip">Revit (.rvt)</span>
+        <span class="chip">Archicad (.pln)</span>
+        <span class="chip">CityGML 2.0</span>
+        <span class="chip">DXF / DWG</span>
+      </div>
+    </section>
+
+    <section id="cases" aria-labelledby="cases-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Case studies</p>
+          <h2 id="cases-title">導入事例</h2>
+        </div>
+        <p>設計事務所、デベロッパー、ビル管理会社など、建物に関わる 140 社以上が利用しています。</p>
+      </div>
+
+      <div class="cases">
+        <article class="case">
+          <p class="case-metric">78<small>% 短縮</small></p>
+          <p>再開発プロジェクトの初期検討で、ボリュームスタディにかかる期間が 3 週間から 4 日になりました。検討できた案の数は 6 案から 40 案に増えています。</p>
+          <footer class="mono">港南都市開発 ／ SKYLINE Massing</footer>
+        </article>
+        <article class="case">
+          <p class="case-metric">0<small>件</small></p>
+          <p>近隣説明会で使う日影図を Shadow で作成するようになってから、図面の訂正による説明会のやり直しは一度も起きていません。</p>
+          <footer class="mono">北辰設計事務所 ／ SKYLINE Shadow</footer>
+        </article>
+        <article class="case">
+          <p class="case-metric">-21<small>% 電力</small></p>
+          <p>延床 8.6 万 m² のオフィスビルで、空調の運転スケジュールを実際の在室データに合わせて見直し、年間の電力使用量を削減しました。</p>
+          <footer class="mono">湊みらい不動産 ／ SKYLINE Ops</footer>
+        </article>
+      </div>
+    </section>
+
+    <section id="company" aria-labelledby="company-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Company</p>
+          <h2 id="company-title">会社概要</h2>
+        </div>
+      </div>
+
+      <div class="company-grid">
+        <div class="message">
+          <p>街の輪郭は、一つひとつの建物の判断が積み重なってできています。その判断が、勘や手作業の計算ではなく、確かなデータにもとづいて行われるようにしたい。私たちはそう考えて、2014年に会社を立ち上げました。</p>
+          <p>メンバーの半数は、建築設計や設備設計の実務を経験したエンジニアです。現場で本当に困っていることから、製品をつくっています。</p>
+          <p class="sign">代表取締役 高森 遥</p>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="profile">
+            <tbody>
+              <tr><th scope="row">商号</th><td>スカイラインテクノロジー株式会社</td></tr>
+              <tr><th scope="row">設立</th><td>2014年4月</td></tr>
+              <tr><th scope="row">資本金</th><td>4億2,000万円（資本準備金を含む）</td></tr>
+              <tr><th scope="row">代表者</th><td>代表取締役 高森 遥</td></tr>
+              <tr><th scope="row">従業員数</th><td>186名（2026年9月時点）</td></tr>
+              <tr><th scope="row">所在地</th><td>〒105-0000 東京都港区芝浦 4-0-0 スカイラインビル 12F</td></tr>
+              <tr><th scope="row">拠点</th><td>大阪オフィス、福岡オフィス</td></tr>
+              <tr><th scope="row">事業内容</th><td>建築・都市開発向けソフトウェアの開発と提供</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 id="contact-title">お問い合わせ</h2>
+        </div>
+        <p>製品デモのお申し込み、お見積もり、採用についてのご質問を受け付けています。2営業日以内に担当者からご連絡します。</p>
+      </div>
+
+      <div class="contact">
+        <dl class="contact-info">
+          <div><dt>電話（平日 9:30〜18:00）</dt><dd>03-0000-0000</dd></div>
+          <div><dt>メール</dt><dd>hello@skyline-tech.example</dd></div>
+          <div><dt>採用</dt><dd>recruit@skyline-tech.example</dd></div>
+        </dl>
+
+        <form id="contact-form" novalidate>
+          <div class="field-row">
+            <label for="name">お名前<input id="name" name="name" autocomplete="name" required placeholder="山田 太郎"></label>
+            <label for="org">会社名<input id="org" name="org" autocomplete="organization" placeholder="山田建築設計"></label>
+          </div>
+          <div class="field-row">
+            <label for="email">メールアドレス<input id="email" name="email" type="email" autocomplete="email" required placeholder="taro@example.jp"></label>
+            <label for="topic">ご用件
+              <select id="topic" name="topic">
+                <option>製品デモの申し込み</option>
+                <option>見積もりの依頼</option>
+                <option>採用について</option>
+                <option>その他</option>
+              </select>
+            </label>
+          </div>
+          <label for="message">内容<textarea id="message" name="message" placeholder="検討中の案件の規模や、知りたいことをご記入ください。"></textarea></label>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:1rem;">
+            <button class="btn" type="submit">送信する</button>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© 2026 Skyline Technology, Inc.</span>
+    <span>※ このサイトは架空の企業のサンプルです。社名・人物・事例はすべて創作です。</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const canvas = document.getElementById('skyline');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const MAX_M = 300;               // 目盛りの上限（m）
+  const OBSTRUCTION_M = 60;        // 航空障害灯が必要になる高さ
+  let buildings = [], lights = [], staticLayer = null, W = 0, H = 0, dpr = 1, colors = {};
+
+  function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+  function token(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  function layout() {
+    const r = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    const rand = rng(20140401);
+    const left = 56, top = 18;
+    const pxPerM = (H - top) / MAX_M;
+    buildings = []; lights = [];
+    let x = left;
+    while (x < W) {
+      const w = 18 + rand() * 46;
+      // 中心付近ほど高くなる都心部の分布
+      const center = 1 - Math.abs((x + w / 2) / W - 0.58) * 1.7;
+      let m = 15 + rand() * 70 + Math.max(0, center) * rand() * 210;
+      m = Math.min(m, 262);
+      buildings.push({ x, w, m, h: m * pxPerM, back: rand() < 0.45 });
+      x += w + (rand() < 0.3 ? 4 + rand() * 10 : 1);
+    }
+    // 背面の建物を先に、前面を後に
+    buildings.sort((a, b) => b.back - a.back);
+    let tallest = buildings.reduce((a, b) => (b.m > a.m ? b : a));
+    colors = {
+      b1: token('--building'), b2: token('--building-2'), win: token('--window'),
+      ink: token('--ink'), muted: token('--muted'), line: token('--line'), signal: token('--signal')
+    };
+
+    staticLayer = document.createElement('canvas');
+    staticLayer.width = canvas.width; staticLayer.height = canvas.height;
+    const s = staticLayer.getContext('2d');
+    s.scale(dpr, dpr);
+
+    // 目盛り
+    s.font = '500 11px "IBM Plex Mono", ui-monospace, monospace';
+    s.textBaseline = 'middle';
+    for (let m = 0; m <= MAX_M; m += 50) {
+      const y = H - m * pxPerM;
+      s.strokeStyle = colors.line; s.lineWidth = 1;
+      s.setLineDash(m % 100 === 0 ? [] : [2, 4]);
+      s.beginPath(); s.moveTo(left - 6, Math.round(y) + 0.5); s.lineTo(W, Math.round(y) + 0.5); s.stroke();
+      if (m % 100 === 0 && m > 0) { s.fillStyle = colors.muted; s.fillText(m + 'm', 10, y); }
+    }
+    s.setLineDash([]);
+    // 60mライン
+    const y60 = H - OBSTRUCTION_M * pxPerM;
+    s.strokeStyle = colors.signal; s.globalAlpha = 0.55; s.setLineDash([6, 4]);
+    s.beginPath(); s.moveTo(left - 6, Math.round(y60) + 0.5); s.lineTo(W, Math.round(y60) + 0.5); s.stroke();
+    s.setLineDash([]); s.globalAlpha = 1;
+    s.fillStyle = colors.signal; s.fillText('60m', 10, y60);
+
+    // 建物と窓
+    const winRand = rng(7);
+    for (const b of buildings) {
+      const y = H - b.h;
+      s.fillStyle = b.back ? colors.b2 : colors.b1;
+      s.fillRect(b.x, y, b.w, b.h);
+      if (b.m > 120 && !b.back) s.fillRect(b.x + b.w / 2 - 1, y - 14, 2, 14); // アンテナ
+      s.fillStyle = colors.win;
+      for (let wy = y + 6; wy < H - 6; wy += 7) {
+        for (let wx = b.x + 4; wx < b.x + b.w - 5; wx += 6) {
+          if (winRand() < (b.back ? 0.08 : 0.16)) { s.globalAlpha = 0.5 + winRand() * 0.5; s.fillRect(wx, wy, 2.5, 3); }
+        }
+      }
+      s.globalAlpha = 1;
+      if (b.m >= OBSTRUCTION_M) {
+        const ly = b.m > 120 && !b.back ? y - 14 : y;
+        lights.push({ x: b.x + b.w / 2, y: ly, phase: winRand() * 0.4 });
+      }
+    }
+    // 最も高い建物の注記
+    const ty = H - tallest.h - (tallest.m > 120 && !tallest.back ? 14 : 0);
+    s.fillStyle = colors.ink; s.textAlign = 'left';
+    const label = 'H=' + Math.round(tallest.m) + 'm';
+    const lx = Math.min(tallest.x + tallest.w + 8, W - s.measureText(label).width - 8);
+    s.fillText(label, lx, Math.max(ty, 12));
+  }
+
+  function draw(t) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(staticLayer, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const still = reduceMotion.matches;
+    for (const l of lights) {
+      // 約 1.5 秒周期で点滅（静止表示では常時点灯）
+      const on = still || ((t / 1500 + l.phase) % 1) < 0.5;
+      ctx.fillStyle = colors.signal;
+      ctx.globalAlpha = on ? 1 : 0.18;
+      ctx.beginPath(); ctx.arc(l.x, l.y - 2, 2.2, 0, Math.PI * 2); ctx.fill();
+      if (on) { ctx.globalAlpha = 0.22; ctx.beginPath(); ctx.arc(l.x, l.y - 2, 6, 0, Math.PI * 2); ctx.fill(); }
+    }
+    ctx.globalAlpha = 1;
+  }
+  function frame(t) { draw(t); if (!reduceMotion.matches) requestAnimationFrame(frame); }
+
+  function redraw() { layout(); draw(performance.now()); }
+  redraw();
+  if (!reduceMotion.matches) requestAnimationFrame(frame);
+
+  let resizeTimer;
+  new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(redraw, 80); }).observe(canvas);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  reduceMotion.addEventListener('change', () => { redraw(); if (!reduceMotion.matches) requestAnimationFrame(frame); });
+  if (document.fonts) document.fonts.ready.then(redraw);
+
+  // お問い合わせフォーム（デモ：送信先はありません）
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('form-status');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = form.elements;
+    const name = f.name.value.trim();
+    const email = f.email.value.trim();
+    status.classList.remove('ok');
+    if (!name) { status.textContent = 'お名前を入力してください。'; f.name.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { status.textContent = 'メールアドレスの形式を確認してください（例：taro@example.jp）。'; f.email.focus(); return; }
+    status.classList.add('ok');
+    status.textContent = name + ' 様、入力内容を確認しました。これはサンプルサイトのため、実際には送信されません。';
+  });
+})();
+</script>
+</body>
+</html>
